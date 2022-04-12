@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="intro.xsl"?>
+<intro>
+	<title>Na zajęciach zapoznasz się z...</title>
+	<list>
+		<item>Ze strukturą plików XML, nazwami węzłów oraz ich zastosowaniem</item>
+		<item>Z zastosowaniem, sposobem użycia oraz poleceniami plików XSLT</item>
+		<item>Z klasami i metodami PHP do obsługi dokumentów napisanych w języku znaczników</item>
+		<item>Możliwymi algorytmami do przetwarzania węzłów z dokumentu XML</item>
+		<item>Korzystania z dokumentacji języka PHP</item>
+	</list>
+</intro>
