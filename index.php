@@ -14,7 +14,7 @@ function handleXml($content)
         }
         return $cell->nodeValue;
     }, $cells);
-    // $cells = array_chunk($cells, 3);
+    $cells = array_chunk($cells, 3);
 
     return $cells;
 }
@@ -34,6 +34,9 @@ function extractDoc($plik)
 }
 
 $cells = extractDoc('30-zadanie.odt');
-foreach ($cells as $cell) {
-    echo "<pre>$cell</pre>";
+$keys = array_column($cells, 0);
+$values = array_column($cells, 1);
+$x = array_combine($keys, $values);
+foreach ($x as $y => $z) {
+    echo "<pre>$y: $z</pre>";
 }
