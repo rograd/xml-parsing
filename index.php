@@ -1,42 +1,51 @@
 <?php
 
-function handleXml($content)
+function clearAnnotations(DOMDocument $xml): void
 {
-    $xml = new DOMDocument('1.0', 'UTF-8');
-    $xml->loadXML($content, LIBXML_NSCLEAN);
-    $cells = $xml->getElementsByTagName('table-cell');
-
-    $cells = iterator_to_array($cells);
-    $cells = array_map(function ($cell) {
-        $childNodes = $cell->firstChild->childNodes;
-        if ($childNodes->length > 1) {
-            return $childNodes[1]->nodeValue;
-        }
-        return $cell->nodeValue;
-    }, $cells);
-    $cells = array_chunk($cells, 3);
-
-    return $cells;
+    $annotations = $xml->getElementsByTagName('annotation');
+    foreach ($annotations as $annotation) {
+        $annotation->parentNode->removeChild($annotation);
+    }
 }
 
-function extractDoc($plik)
+function handleXml(string $xml): array
+{
+    $doc = new DOMDocument('1.0', 'UTF-8');
+    $doc->loadXML($xml);
+
+    clearAnnotations($doc);
+
+    $rows = $doc->getElementsByTagName('table-row');
+    $rows = iterator_to_array($rows);
+    $rows = array_map(function ($row) {
+        $cells = $row->childNodes;
+        $cells = iterator_to_array($cells);
+        $cells = array_map(fn ($cell) => $cell->nodeValue, $cells);
+
+        return $cells;
+    }, $rows);
+
+    return $rows;
+}
+
+function extractDoc(string $plik)
 {
     $filename = __DIR__ . "/$plik";
     $zip = new ZipArchive();
     if ($zip->open($filename)) {
-        $contentFile = $zip->getFromName('content.xml');
+        $content = $zip->getFromName('content.xml');
         $zip->close();
-        if ($contentFile) {
-            return handleXml($contentFile);
-        }
+        return $content;
     }
-    return false;
 }
 
-$cells = extractDoc('30-zadanie.odt');
-$keys = array_column($cells, 0);
-$values = array_column($cells, 1);
-$x = array_combine($keys, $values);
-foreach ($x as $y => $z) {
-    echo "<pre>$y: $z</pre>";
+$xml = extractDoc('30-zadanie.odt');
+if ($xml) {
+    $rows = handleXml($xml);
+    $data = array_column($rows, 1, 0);
+    // $data2 = array_column($rows, 2);
+    echo '<pre>';
+    print_r($data);
+    // print_r($data2);
+    echo '</pre>';
 }
